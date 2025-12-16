@@ -1,0 +1,6 @@
+function OnBeforeCompilation()
+	local header = vmprotect.core():outputArchitecture():segments():header()
+	if header ~= nil then
+		header:setExcludedFromMemoryProtection(true)
+	end
+end

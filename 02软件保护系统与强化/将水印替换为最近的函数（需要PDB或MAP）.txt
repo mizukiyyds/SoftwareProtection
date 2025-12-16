@@ -1,0 +1,26 @@
+local input = vmprotect:core():inputFile()
+for i = 1, input:count() do
+  local file = input:item(i)
+  if file:functions() ~= nil then
+    for f = 1, file:functions():count() do
+      local func = file:functions():item(f)
+      if func:type() == ObjectType.APIMarker and func:needCompile() then
+        local closest = nil
+        for m = 1, file:mapFunctions():count() do
+          local map = file:mapFunctions():item(m)
+          if map:type() == ObjectType.Code and map:address() < func:address() then
+            if closest == nil or closest:address() < map:address() then
+              closest = map
+            end
+          end
+        end
+    
+        if closest then
+          print(func:name() .. ' replaced with ' .. closest:name())
+          func:setNeedCompile(false)
+          file:functions():addByAddress(closest:address(), func:compilationType())
+        end
+      end
+    end
+  end
+end
